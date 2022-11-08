@@ -1,0 +1,114 @@
+.wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 4%;
+}
+
+#Top-area {
+  background-color: rgba(255, 255, 255, .6);
+  background-blend-mode: screen;
+  background-image: url(src/images/Big_bg.jpg);
+  height: 30vh;
+}
+/* 大型背景影像 */
+.big-bg {
+  background-size: 100vw 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  width: 300px;
+  margin-top: 30px;
+}
+
+.main-nav {
+  display: flex;
+  font-size: 1.25rem;
+  font-family: 'Philosopher', serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 30px;
+  list-style: none;
+}
+
+.main-nav a {
+  color: #432;
+}
+
+.main-nav a:hover {
+  color: #0bd;
+}
+
+.page-title {
+  margin-top: 10px;
+  font-size: 2rem;
+  text-align: center;
+  vertical-align: middle;
+  font-family: 'Philosopher', serif;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.request {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.upload_zone {
+  font-size: 1rem;
+  text-align: center;
+  width: 20vw;
+  height: 20vh;
+  margin: 0 auto 10px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: rgba(214, 214, 214, 0.432);
+  border: 1px rgb(0, 0, 0) solid;
+  border-radius: 5px;
+}
+
+.upload_zone_enter {
+  border: 5px black dashed;
+  background-clip: content-box;
+}
+
+.ant-upload-drag-icon{
+  height: 10px;
+}
+
+.ant-upload-text{
+  padding-top: 10px;
+}
+
+.load_button{
+  width: 20vw;
+  display: flex;
+  margin: 0 auto;
+  justify-content: space-evenly;
+  text-align: center;
+}
+
+.ant-dragger{
+  height: 20vh;
+  margin: 0px auto 10vh;
+  padding: 5vh 0;
+  width: 40vw;
+}
+
+.hint{
+  text-align: center;
+  font-weight: bold;
+}
+
+.Text_zone{
+  width: 40vw;
+  height: 80px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
