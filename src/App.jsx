@@ -2,7 +2,7 @@ import { useState } from 'react'
 import 'antd/dist/antd.css';
 import './App.css'
 import { InboxOutlined } from '@ant-design/icons';
-import { Button, message, Upload, Progress, Input } from 'antd';
+import { Button, message, Upload, Progress, Input, Select } from 'antd';
 
 const { TextArea } = Input;
 function App() {
@@ -14,6 +14,9 @@ function App() {
   const [upload_stat, setStat] = useState('active');
   const [upload_stat2, setStat2] = useState('active');
   const [segment, setSegment] = useState('');
+  const [accent, setAccent] = useState('0');
+  const [spell_type, setSpell] = useState('0');
+  const [out_format, setFormat] = useState('0');
   
   const handleUpload = () => {
     let formData = new FormData();
@@ -76,7 +79,10 @@ function App() {
       }
     };
     setStat2('active');
-    axios.post('http://10.10.8.42:5000/segment', formData, config)
+    axios.post(
+      `http://10.10.8.42:5000/segment/${accent}/${spell_type}/${out_format}`,
+      formData,
+      config)
     .then((response) => {
       setFileList2([]);
       console.log('上傳成功');
@@ -84,7 +90,7 @@ function App() {
       setStat2('');
       setSegment(response.data['content']);
       if (mode) {
-        window.location.href = 'http://10.10.8.42:5000/segment/result';
+        window.location.href = 'http://10.10.8.42:5000/segment';
       }
     })
     .catch((e) => {
@@ -148,22 +154,107 @@ function App() {
             </Upload.Dragger>
 
             <Progress percent={progress2} status={upload_stat2}></Progress>
-
-            <div className="load_button">
-              <Button
-                type="primary"
-                onClick={handle_segment_no_file}
-                disabled={fileList2.length === 0}
-                loading={uploading}
-              >{uploading ? '上傳中' : '上傳'}
-              </Button>
-              <Button
-                type="primary"
-                onClick={handle_segment}
-                disabled={fileList2.length === 0}
-                loading={uploading}
-              >{uploading ? '上傳中' : '上傳並下載'}
-              </Button>
+            
+            <div style={{
+              display: 'flex',
+              //position: 'relative',
+            }}>
+              <div style={{
+                marginTop: 15,
+                //position: 'absolute',
+                //width: '15vw',
+                minWidth: '375px',
+              }}><Select
+                defaultValue="1"
+                style={{
+                  width: 120,
+                }}
+                onChange={(value) => {setAccent(value)}}
+                options={[
+                  {
+                    value: '0',
+                    label: '大埔腔',
+                  },
+                  {
+                    value: '1',
+                    label: '四縣腔',
+                  },
+                  {
+                    value: '2',
+                    label: '南四縣腔',
+                  },
+                  {
+                    value: '3',
+                    label: '海陸腔',
+                  },
+                  {
+                    value: '4',
+                    label: '紹安腔',
+                  },
+                  {
+                    value: '5',
+                    label: '饒平腔',
+                  },
+                ]}
+              />
+              <Select
+                defaultValue="0"
+                style={{
+                  width: 120,
+                }}
+                onChange={(value) => {setSpell(value)}}
+                options={[
+                  {
+                    value: '0',
+                    label: '羅馬音',
+                  },
+                  {
+                    value: '1',
+                    label: '注音',
+                  },
+                  {
+                    value: '2',
+                    label: '羅馬音 + 注音',
+                  },
+                ]}
+              />
+              <Select
+                defaultValue="0"
+                style={{
+                  width: 120,
+                }}
+                onChange={(value) => {setFormat(value)}}
+                options={[
+                  {
+                    value: '0',
+                    label: 'CSV',
+                  },
+                  {
+                    value: '1',
+                    label: 'TXT',
+                  },
+                ]}
+              /></div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '11vw',
+              }}>
+                <Button
+                  type="primary"
+                  onClick={handle_segment_no_file}
+                  disabled={fileList2.length === 0}
+                  loading={uploading}
+                >{uploading ? '上傳中' : '上傳'}
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={handle_segment}
+                  disabled={fileList2.length === 0}
+                  loading={uploading}
+                >{uploading ? '上傳中' : '上傳並下載'}
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -176,7 +267,7 @@ function App() {
           /></div>
 
           <div className="ant-dragger">
-          <h2 className="hint">詞庫更新</h2>
+            <h2 className="hint">詞庫更新</h2>
             <Upload.Dragger
               onRemove={(file) => {
                 const index = fileList.indexOf(file);

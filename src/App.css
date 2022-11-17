@@ -55,29 +55,6 @@
   font-weight: bold;
 }
 
-.request {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.upload_zone {
-  font-size: 1rem;
-  text-align: center;
-  width: 20vw;
-  height: 20vh;
-  margin: 0 auto 10px;
-  padding: 10px;
-  cursor: pointer;
-  background-color: rgba(214, 214, 214, 0.432);
-  border: 1px rgb(0, 0, 0) solid;
-  border-radius: 5px;
-}
-
-.upload_zone_enter {
-  border: 5px black dashed;
-  background-clip: content-box;
-}
-
 .ant-upload-drag-icon{
   height: 10px;
 }
@@ -96,19 +73,20 @@
 
 .ant-dragger{
   height: 20vh;
-  margin: 0px auto 10vh;
-  padding: 5vh 0;
+  margin: 0 auto 130px;
+  padding: 2vh 0;
   width: 40vw;
 }
 
 .hint{
   text-align: center;
   font-weight: bold;
+  margin: 0 auto;
 }
 
 .Text_zone{
   width: 40vw;
-  height: 80px;
-  margin: 0 auto;
-  padding: 10px 0;
+  height: 100px;
+  margin: 20px auto 40px;
+  padding: 0 0 10px;
 }
