@@ -2,7 +2,6 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import { InboxOutlined } from '@ant-design/icons';
 import { Button, message, Upload, Progress, Input, Select } from 'antd';
-const { TextArea } = Input;
 class Segment_area extends React.Component {
     
     constructor(props) {
@@ -27,7 +26,6 @@ class Segment_area extends React.Component {
           formData.append('name', file.name);
           formData.append('file', file.originFileObj);
         });
-        this.setState({uploading: true});
 
         const config = {
           headers: {'Content-Type': 'multipart/form-data'},
@@ -39,7 +37,9 @@ class Segment_area extends React.Component {
             //console.log(percentCompleted);
           }
         };
-        this.setState({upload_stat: 'active'});
+        this.setState({
+            uploading: true,
+            upload_stat: 'active'});
         const { accent, spell, format } = this.state;
         axios.post(
           `http://10.10.8.42:5000/segment/${accent}/${spell}/${format}`,
