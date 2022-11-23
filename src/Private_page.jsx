@@ -12,7 +12,8 @@ const Private_page = (props) => {
   if (props.auth) {
     return (
         <div style={{
-            minHeight: '800px'
+            height: '90vh',
+            minHeight: '700px'
         }}>
             <Segment_area onChange={(value) => {setSegment(value)}}></Segment_area>
 

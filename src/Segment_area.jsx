@@ -2,6 +2,8 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import { InboxOutlined } from '@ant-design/icons';
 import { Button, message, Upload, Progress, Select } from 'antd';
+
+const api_url = "http://172.18.23.175:5000";
 class Segment_area extends React.Component {
     
     constructor(props) {
@@ -42,12 +44,11 @@ class Segment_area extends React.Component {
             upload_stat: 'active'});
         const { accent, spell, format } = this.state;
         axios.post(
-          `http://10.10.8.42:5000/segment/${accent}/${spell}/${format}`,
+          `${api_url}/segment/${accent}/${spell}/${format}`,
           formData,
           config)
         .then((response) => {
-            console.log('上傳成功');
-            message.success('上傳成功');
+            message.success('斷詞成功');
             this.setState({
                  fileList: [],
                  upload_stat: ''});
@@ -56,7 +57,7 @@ class Segment_area extends React.Component {
                 onChange(response.data['content']);
             }
             if (mode) {
-                window.location.href = 'http://10.10.8.42:5000/segment';
+                window.location.href = `${api_url}/segment`;
             }
         })
         .catch((e) => {

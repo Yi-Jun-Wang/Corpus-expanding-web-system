@@ -5,6 +5,7 @@ import { LockOutlined, UserOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@a
 import { Button, Input, message } from 'antd';
 import { Navigate } from 'react-router-dom';
 
+const api_url = 'http://172.18.23.175:5000';
 class Login_interface extends React.Component {
     
     constructor(props) {
@@ -20,17 +21,19 @@ class Login_interface extends React.Component {
     handleClick = () => {
         const { onChange } = this.props;
         const data = {...this.state};
-        axios.post(`http://10.10.8.42:5000/login`, data)
+        axios.post(`${api_url}/login`, data)
         .then((response) => {
-            console.log('login successfully.');
+            message.success("Login successfully.")
+            console.log(response);
+            localStorage.setItem("token", response.data['access_token']);
             if (onChange != undefined){
                 onChange(true);
             }
         })
         .catch((e) => {
+            message.error("Incorrect username or password.");
             console.log(e);
             this.setState({status:'error'})
-            message.error("Incorrect username or password.");
             onChange(false);
         })
     }

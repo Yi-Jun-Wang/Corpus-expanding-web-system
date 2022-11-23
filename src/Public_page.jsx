@@ -12,7 +12,9 @@ const Public_page = (props) => {
       return <Navigate to="/private" />;
     }
     return (
-        <div>
+        <div style={{
+          minHeight: '500px'
+        }}>
 
           <Segment_area onChange={(value) => {setSegment(value)}}></Segment_area>
 

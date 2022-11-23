@@ -3,6 +3,7 @@ import 'antd/dist/antd.css';
 import { InboxOutlined } from '@ant-design/icons';
 import { Button, message, Upload, Progress } from 'antd';
 
+const api_url = "http://172.18.23.175:5000";
 class Update_area extends React.Component {
 
     constructor(props) {
@@ -23,9 +24,12 @@ class Update_area extends React.Component {
           formData.append('name', file.name);
           formData.append('file', file.originFileObj);
         });
-        
-        const config = {
-          headers: {'Content-Type': 'multipart/form-data'},
+
+        const token = localStorage.getItem("token");
+        const config = { 
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`},
           onUploadProgress: (progressEvent) => {
             var percentCompleted = Math.round(
               (progressEvent.loaded / progressEvent.total) * 100
@@ -33,26 +37,20 @@ class Update_area extends React.Component {
             this.setState({progress: percentCompleted});
           }
         };
+        
         this.setState({
             uploading: true,
             upload_stat: 'active'});
             
-        axios.post('http://10.10.8.42:5000/update_corpus', formData, config)
-        .then((response) => {
+        axios.post(`${api_url}/update_corpus`, formData, config)
+        .then((res) => {
             this.setState({fileList: []});
-            if (response.data['response'] === '更新成功') {
-              console.log('更新成功');
-              message.success('更新成功');
-              this.setState({upload_stat: ''});
-            } else {
-              console.log(response.data['response']);
-              message.error(response.data['response']);
-              this.setState({upload_stat: 'exception'});
-            }
+            message.success('更新成功');
+            this.setState({upload_stat: ''});
           })
           .catch((e) => {
             console.log(e);
-            message.error('upload failed.');
+            message.error(e.response.data['msg']);
             this.setState({upload_stat: 'exception'});
           })
           .finally(() => {
@@ -103,7 +101,7 @@ class Update_area extends React.Component {
                     loading={this.state.uploading}
                 >{this.state.uploading ? '上傳中' : '上傳'}
                 </Button>
-                <a href="http://10.10.8.42:5000/download" target="_blank">
+                <a href={`${api_url}/download`} target="_blank">
                     <Button
                     type="primary">下載詞庫
                     </Button>
