@@ -1,52 +1,23 @@
+import Public_page from './Public_page'
+import Private_page from './Private_page';
+import Login from './Login'
+import Logout from './Logout'
+import Home from './Home'
 import { useState } from 'react'
-import 'antd/dist/antd.css';
-import './App.css'
-import { Button, message, Upload, Progress, Input, Select } from 'antd';
-import Segment_area from './Segment_area'
-import Update_area from './Update_corp'
+import { Routes, Route } from 'react-router-dom';
 
-const { TextArea } = Input;
 function App() {
-  const [segment, setSegment] = useState('');
-
-  return (
-      <div className="App">
-          <div id="Top-area" className="big-bg">
-              <header className="page-header wrapper">
-                  <h1><img className="logo" src="src/images/NYCU.png" alt="陽明交通大學" /></h1>
-                  <nav>
-                      <ul className="main-nav">
-                          <li><a href="Login.html">Login</a></li>
-                      </ul>
-                  </nav>
-              </header>
-
-              <div className="wrapper">
-                  <h2 className="page-title">客語詞庫擴充系統</h2>
-              </div>
-          </div>
-
-          <Segment_area onChange={(value) => {setSegment(value)}}></Segment_area>
-
-          <div className="Text_zone">
-          <TextArea
-            showCount
-            value={segment}
-            style={{resize: 'none', height: 120}}
-            onChange={(e) => {setSegment(e.target.value)}}
-          /></div>
-
-          <Update_area></Update_area>
-
-          <footer>
-              <div className="wrapper">
-                  <p><small>&copy; 2022 Jimmy</small></p>
-              </div>
-          </footer>
-
-      </div>
-        
-  )
+    const [auth, setAuth] = useState(false);
+    return (
+        <Routes>
+            <Route path="/" element={<Home auth={auth}/>}>
+                <Route path="/" element={<Public_page auth={auth}/>} />
+                <Route path="private" element={<Private_page auth={auth}/>} />
+                <Route path="login" element={<Login auth={auth} onChange={(value)=>{setAuth(value)}}/>} />
+                <Route path="logout" element={<Logout onChange={value=>{setAuth(value)}}/>} />
+            </Route>
+        </Routes>
+    );
 }
 
 export default App

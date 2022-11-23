@@ -9,10 +9,11 @@
   background-blend-mode: screen;
   background-image: url(src/images/Big_bg.jpg);
   height: 30vh;
+  min-height: 160px;
 }
 /* 大型背景影像 */
 .big-bg {
-  background-size: 100vw 100vh;
+  background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -24,7 +25,7 @@
 
 .logo {
   width: 300px;
-  margin-top: 30px;
+  margin-top: 3vh;
 }
 
 .main-nav {
@@ -46,7 +47,7 @@
 }
 
 .page-title {
-  margin-top: 10px;
+  margin-top: 1vh;
   font-size: 2rem;
   text-align: center;
   vertical-align: middle;
@@ -74,6 +75,7 @@
 .ant-dragger{
   height: 20vh;
   margin: 0 auto 130px;
+  min-height: 100px;
   padding: 2vh 0;
   width: 40vw;
 }
