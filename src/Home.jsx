@@ -13,6 +13,7 @@ const Home = (props) => {
                   </h1>
                   <nav>
                       <ul className="main-nav">
+                          <li><Link to={"/wdcomb"}>新增詞句</Link></li>
                           <li><Link to={props.auth ? "/logout" : "/login"}>{props.auth ? 'Logout' : 'Login'}</Link></li>
                       </ul>
                   </nav>

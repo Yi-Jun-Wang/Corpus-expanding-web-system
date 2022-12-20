@@ -5,7 +5,8 @@ import { LockOutlined, UserOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@a
 import { Button, Input, message } from 'antd';
 import { Navigate } from 'react-router-dom';
 
-const api_url = 'http://172.18.23.175:5000';
+// const api_url = 'https://10.10.8.42:5000';
+const api_url = 'https://127.0.0.1:5000';
 class Login_interface extends React.Component {
     
     constructor(props) {
@@ -25,7 +26,7 @@ class Login_interface extends React.Component {
         .then((response) => {
             message.success("Login successfully.")
             console.log(response);
-            localStorage.setItem("token", response.data['access_token']);
+            sessionStorage.setItem("token", response.data['access_token']);
             if (onChange != undefined){
                 onChange(true);
             }
@@ -71,6 +72,7 @@ class Login_interface extends React.Component {
                         }}
                         status={this.state.status}
                         placeholder='Password'
+                        onPressEnter={this.handleClick}
                         onChange={(e) => {this.setState({pass: e.target.value});}}
                         prefix={<LockOutlined/>}
                         iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />

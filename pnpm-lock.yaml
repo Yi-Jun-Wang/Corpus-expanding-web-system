@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/react': ^18.0.17
   '@types/react-dom': ^18.0.6
+  '@vitejs/plugin-basic-ssl': ^1.0.1
   '@vitejs/plugin-react': ^2.1.0
   react: ^18.2.0
   react-dom: ^18.2.0
@@ -15,6 +16,7 @@ dependencies:
 devDependencies:
   '@types/react': 18.0.21
   '@types/react-dom': 18.0.6
+  '@vitejs/plugin-basic-ssl': 1.0.1_vite@3.1.8
   '@vitejs/plugin-react': 2.1.0_vite@3.1.8
   vite: 3.1.8
 
@@ -363,6 +365,15 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+    dev: true
+
+  /@vitejs/plugin-basic-ssl/1.0.1_vite@3.1.8:
+    resolution: {integrity: sha512-pcub+YbFtFhaGRTo1832FQHQSHvMrlb43974e2eS8EKleR3p1cDdkJFPci1UhwkEf1J9Bz+wKBSzqpKp7nNj2A==}
+    engines: {node: '>=14.6.0'}
+    peerDependencies:
+      vite: ^3.0.0 || ^4.0.0
+    dependencies:
+      vite: 3.1.8
     dev: true
 
   /@vitejs/plugin-react/2.1.0_vite@3.1.8:

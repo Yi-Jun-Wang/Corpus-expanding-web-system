@@ -3,11 +3,11 @@ import Private_page from './Private_page';
 import Login from './Login'
 import Logout from './Logout'
 import Home from './Home'
+import Word_combine from './word_combine'
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom';
-
 function App() {
-    const [auth, setAuth] = useState(false);
+    const [auth, setAuth] = useState(sessionStorage.getItem("token")? true : false);
     return (
         <Routes>
             <Route path="/" element={<Home auth={auth}/>}>
@@ -15,6 +15,7 @@ function App() {
                 <Route path="private" element={<Private_page auth={auth}/>} />
                 <Route path="login" element={<Login auth={auth} onChange={(value)=>{setAuth(value)}}/>} />
                 <Route path="logout" element={<Logout onChange={value=>{setAuth(value)}}/>} />
+                <Route path="wdcomb" element={<Word_combine/>} />
             </Route>
         </Routes>
     );

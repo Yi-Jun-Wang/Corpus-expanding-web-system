@@ -3,7 +3,8 @@ import 'antd/dist/antd.css';
 import { InboxOutlined } from '@ant-design/icons';
 import { Button, message, Upload, Progress, Select } from 'antd';
 
-const api_url = "http://172.18.23.175:5000";
+// const api_url = "https://10.10.8.42:5000";
+const api_url = 'https://127.0.0.1:5000';
 class Segment_area extends React.Component {
     
     constructor(props) {
