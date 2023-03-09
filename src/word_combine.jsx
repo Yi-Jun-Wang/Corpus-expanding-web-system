@@ -1,14 +1,16 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import './index.css';
-import { Table, Input, Button, Popconfirm, Form } from 'antd';
-const EditableContext = React.createContext(null);
+import './App.css';
+import { Navigate } from 'react-router-dom';
+import { Table, Input, Form, Button, message } from 'antd';
 
+const api_url = 'https://127.0.0.1:5000';
+const EditableContext = React.createContext(null);
 const InputText = (props) => {
-  const test_sentence = '阿爸_你_愛';
+  const test_sentence = '';
   const [sentence, setSent] = React.useState(test_sentence);
   const re = /([^_]+)/g;
+
   return (
     <div
       style={{
@@ -19,13 +21,33 @@ const InputText = (props) => {
       <Input
         type="text"
         value={sentence}
+        onPressEnter={() => {props.splitword(sentence, setSent)}}
         onChange={(e) => {
           setSent(e.target.value);
-          const new_datas = e.target.value.match(re);
-          props.combine(new_datas);
+          if (e.target.value.includes('_')) {
+            const new_datas = e.target.value.match(re);
+            // console.log(new_datas);
+            props.combine(new_datas);
+          }
+          else {
+            props.combine(null);
+          }
         }}
       ></Input>
-      
+      <Button 
+        style={{
+          marginLeft: '5px'
+        }}
+        type="primary"
+        onClick={() => {props.splitword(sentence, setSent)}}
+      >斷詞</Button>
+      <Button 
+        style={{
+          marginLeft: '5px'
+        }}
+        type="primary"
+        onClick={props.update}
+      >更新詞庫</Button>
     </div>
   );
 };
@@ -117,11 +139,36 @@ class EditableTable extends React.Component {
       {
         title: '詞',
         dataIndex: 'pk',
-        width: '20%',
+        width: '10%',
       },
       {
-        title: '拼音',
-        dataIndex: 'spell',
+        title: '四縣腔',
+        dataIndex: 'spell1',
+        editable: true,
+      },
+      {
+        title: '海陸腔',
+        dataIndex: 'spell2',
+        editable: true,
+      },
+      {
+        title: '大埔腔',
+        dataIndex: 'spell3',
+        editable: true,
+      },
+      {
+        title: '饒平腔',
+        dataIndex: 'spell4',
+        editable: true,
+      },
+      {
+        title: '詔安腔',
+        dataIndex: 'spell5',
+        editable: true,
+      },
+      {
+        title: '南四縣腔',
+        dataIndex: 'spell6',
         editable: true,
       },
       {
@@ -137,33 +184,9 @@ class EditableTable extends React.Component {
         width: '10%',
       },
     ];
-    let initial_words = [
-      {
-        key: '0',
-        pk: '阿爸',
-        spell: 'a24 ba24',
-        freq: '1034',
-        class: 'n',
-      },
-      {
-        key: '1',
-        pk: '你',
-        spell: 'ni11',
-        freq: '6338',
-        class: 'pron',
-      },
-      {
-        key: '2',
-        pk: '愛',
-        spell: 'oi55',
-        freq: '10387',
-        class: 'n',
-      },
-    ];
     this.state = {
-      dataSource: [...initial_words],
-      words: [...initial_words],
-      count: 2,
+      dataSource: [],
+      words: [],
     };
   }
 
@@ -178,6 +201,10 @@ class EditableTable extends React.Component {
   };
 
   handleCombine = (new_words) => {
+    if (!new_words) {
+      this.setState({ words: [] });
+      return;
+    }
     const { dataSource } = this.state;
     const priority = { '': 0, adj: 1, n: 2, pron: 3, adv: 4, v: 5 };
     let words = [];
@@ -186,19 +213,42 @@ class EditableTable extends React.Component {
     for (let i = 0; i < new_words.length; i++) {
       let result = dataSource.filter((w) => w.pk === new_words[i]);
       if (result.length !== 0) {
-        result[0].key = `${i}`;
-        words.push(result[0]);
+        let temp = {...result[0]};
+        temp.key = `${i}`;
+        words.push(temp);
       } else {
         found = false;
-        new_word = { key: `${i}`, pk: '', spell: '', freq: '0', class: '' };
+        new_word = { 
+          key: `${i}`,
+          pk: '', 
+          spell1: '',
+          spell2: '',
+          spell3: '',
+          spell4: '',
+          spell5: '',
+          spell6: '',
+          freq: '0', 
+          class: '' 
+        };
+        let temp = new_words[i]
         for (let j = 0; j < dataSource.length; j++) {
-          if (new_words[i].search(dataSource[j].pk) !== -1) {
-            found = true;
+          if (temp.search(dataSource[j].pk) === 0) {
+            temp = temp.substring(dataSource[j].pk.length);
             new_word.pk += dataSource[j].pk;
-            new_word.spell += `${dataSource[j].spell} `;
-            if (priority[new_word.class] < priority[dataSource[j].class]) {
-              new_word.class = dataSource[j].class;
+            if (new_words[i].pk === new_word.pk) {
+              console.log(new_word.pk)
+              found = true;
             }
+            new_word.spell1 += `${dataSource[j].spell1}`;
+            new_word.spell2 += `${dataSource[j].spell2}`;
+            new_word.spell3 += `${dataSource[j].spell3}`;
+            new_word.spell4 += `${dataSource[j].spell4}`;
+            new_word.spell5 += `${dataSource[j].spell5}`;
+            new_word.spell6 += `${dataSource[j].spell6}`;
+            // if (priority[new_word.class] < priority[dataSource[j].class]) {
+            //   new_word.class = dataSource[j].class;
+            // }
+            new_word.class += `${dataSource[j].class},`
           } else if (found) {
             break;
           }
@@ -209,6 +259,40 @@ class EditableTable extends React.Component {
     // console.log(words);
     this.setState({ words: [...words] });
   };
+
+  handleSplit = (sentence, setSent) => {
+    axios.post(`${api_url}/split`, {sent: sentence})
+      .then((res) => {
+        this.setState({ 
+          words: [...res.data['words']],
+          dataSource: [...res.data['words']]
+        });
+        setSent(res.data['sentence'])
+        // console.log(res.data)
+      })
+      .catch((e) => {
+        message.error(e.response.data['msg']);
+      })
+      .finally(() => {});
+  }
+
+  handleUpdate = () => {
+    const {words} = this.state;
+    const token = sessionStorage.getItem("token");
+    const config = { 
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+    axios.post(`${api_url}/update`, {words: words}, config)
+      .then((res) => {
+        message.success(res.data['msg']);
+      })
+      .catch((e) => {
+        message.error(e.response.data['msg']);
+      })
+      .finally(() => {});
+  }
 
   render() {
     const {words} = this.state;
@@ -234,29 +318,48 @@ class EditableTable extends React.Component {
         }),
       };
     });
-
-    return (
-      <div style={{
-        width: '60vw',
-        margin: '10px auto',
-        minHeight: '600px',
-      }}>
-        <InputText
+      return (
+        <div style={{
+          width: '80vw',
+          margin: '10px auto',
+          minHeight: '600px',
+          paddingBottom: '40px'
+        }}>
+          <InputText
           combine={(new_words) => {
             this.handleCombine(new_words);
           }}
-        />
-
-        <Table
-          components={components}
-          rowClassName={() => 'editable-row'}
-          bordered
-          dataSource={words}
-          columns={columns}
-        />
-      </div>
-    );
+          splitword={(sentence, setSent) => {
+            this.handleSplit(sentence, setSent);
+          }}
+          update={this.handleUpdate}/>
+          <Table
+            components={components}
+            rowClassName={'editable-row'}
+            bordered
+            dataSource={words}
+            columns={columns}
+            pagination={{
+              position: ['bottomCenter']
+            }}
+          />
+        </div>
+      );
   }
 }
 
-export default EditableTable;
+const combine_page = (props) => {
+  if (props.auth) {
+    return (
+      <EditableTable />
+    );
+  }
+  else {
+    useEffect( () => { 
+      message.warning("登入後才可進入該頁面！");
+    }, []);
+    return <Navigate to="/login" />;
+  }
+}
+
+export default combine_page;

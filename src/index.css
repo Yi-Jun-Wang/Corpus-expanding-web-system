@@ -21,18 +21,6 @@ li {
   margin-right: 20px;
 }
 
-button {
-  font-size: 1rem;
-  background: #0bd;
-  color: #fff;
-  border-radius: 5px;
-  padding: 10px 30px;
-  margin-top: 15px;
-}
-button:hover {
-  background: #0090aa;
-}
-
 label {
   font-size: 1.125rem;
   margin-bottom: 10px;

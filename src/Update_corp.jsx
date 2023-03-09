@@ -99,6 +99,9 @@ class Update_area extends React.Component {
 
                     <div className="load_button">
                     <Button
+                        style={{
+                            marginTop:'15px',
+                        }}
                         type="primary"
                         onClick={this.handleUpload}
                         disabled={this.state.fileList.length === 0}
@@ -107,7 +110,10 @@ class Update_area extends React.Component {
                     </Button>
                     <a href={`${api_url}/download`} target="_blank">
                         <Button
-                        type="primary">下載詞庫
+                            style={{
+                                marginTop:'15px',
+                            }}
+                            type="primary">下載詞庫
                         </Button>
                     </a>
                     </div>

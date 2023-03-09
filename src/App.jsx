@@ -15,7 +15,7 @@ function App() {
                 <Route path="private" element={<Private_page auth={auth}/>} />
                 <Route path="login" element={<Login auth={auth} onChange={(value)=>{setAuth(value)}}/>} />
                 <Route path="logout" element={<Logout onChange={value=>{setAuth(value)}}/>} />
-                <Route path="wdcomb" element={<Word_combine/>} />
+                <Route path="wdcomb" element={<Word_combine auth={auth}/>} />
             </Route>
         </Routes>
     );

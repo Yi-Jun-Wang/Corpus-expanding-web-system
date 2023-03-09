@@ -196,6 +196,9 @@ class Segment_area extends React.Component {
                     width: '11vw',
                 }}>
                     <Button
+                    style={{
+                        marginTop:'15px',
+                    }}
                     type="primary"
                     onClick={this.handle_segment_no_file}
                     disabled={this.state.fileList.length === 0}
@@ -203,6 +206,9 @@ class Segment_area extends React.Component {
                     >{this.state.uploading ? '上傳中' : '上傳'}
                     </Button>
                     <Button
+                    style={{
+                        marginTop:'15px',
+                    }}
                     type="primary"
                     onClick={this.handle_segment}
                     disabled={this.state.fileList.length === 0}

@@ -53,14 +53,13 @@ class Login_interface extends React.Component {
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center',
-                    position: 'relative'
                 }}>
                     <div style={{
-                        position: 'relative'
+                        height: '70px',
                         }}>
                     <Input
                         style={{
-                            height: '35px'
+                            height: '35px',
                         }}
                         status={this.state.status}
                         placeholder='Account'
@@ -68,7 +67,7 @@ class Login_interface extends React.Component {
                         prefix={<UserOutlined/>} />
                     <Input.Password 
                         style={{
-                            height: '35px'
+                            height: '35px',
                         }}
                         status={this.state.status}
                         placeholder='Password'
@@ -77,11 +76,6 @@ class Login_interface extends React.Component {
                         prefix={<LockOutlined/>}
                         iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
                     </div>
-                    <div style={{
-                        position: 'absolute',
-                        top: '-15px',
-                        left: '430px'
-                    }}>
                     <Button
                         style={{
                             height: '70px'
@@ -89,8 +83,7 @@ class Login_interface extends React.Component {
                         type="primary"
                         onClick={this.handleClick}
                     >登入
-                    </Button>
-                    </div>              
+                    </Button>           
                 </div>
             </div>
         );

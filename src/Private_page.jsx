@@ -1,7 +1,7 @@
 import 'antd/dist/antd.css';
 import './App.css'
-import { useState } from 'react'
-import { Input } from 'antd';
+import { useState, useEffect } from 'react'
+import { Input, message } from 'antd';
 import { Navigate } from 'react-router-dom';
 import Segment_area from './Segment_area'
 import Update_area from './Update_corp'
@@ -30,7 +30,12 @@ const Private_page = (props) => {
         </div>       
     );
   }
-  return <Navigate to="/" />;
+  else {
+    useEffect( () => { 
+      message.warning("登入後才可進入該頁面！");
+    }, []);
+    return <Navigate to="/login" />;
+  }
 }
 
 export default Private_page;
