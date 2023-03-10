@@ -25,7 +25,7 @@ const Private_page = (props) => {
                 onChange={(e) => {setSegment(e.target.value)}}
             /></div>
 
-            <Update_area></Update_area>
+            {/*<Update_area></Update_area>*/}
 
         </div>       
     );

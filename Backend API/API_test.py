@@ -28,11 +28,12 @@ CORS(app)
 jwt = JWTManager()
 jwt.init_app(app)
 app.config['JWT_SECRET_KEY'] = 'JimmyWang'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 1 # 2hrs
 
 # ======================== segment ======================== #
 
 @app.route('/segment/<accent>/<spell>/<out_format>' , methods=['POST'])
-def segment(accent='1', spell='0', out_format='0'):
+def article_segment(accent='1', spell='0', out_format='0'):
     global segment_result, file_name
     file = request.files['file']
     split_name = file.filename.split('.')
@@ -44,17 +45,17 @@ def segment(accent='1', spell='0', out_format='0'):
     lines = file.read()
     lines += "\nend_of_article".encode('utf-16')
 
-    p2 = subprocess.Popen(
+    process = subprocess.Popen(
         ["C:/研究所/雲端詞庫系統/Hakka_NLP_command/x64/Debug/Hakka_NLP_command.exe", accent, spell, out_format],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
 
-    # p2.stdin.write(lines.decode('utf-16').encode('utf-8'))
-    # p2.stdin.close()
+    # process.stdin.write(lines.decode('utf-16').encode('utf-8'))
+    # process.stdin.close()
     
     try:
-        result, errs = p2.communicate(
+        result, errs = process.communicate(
             input=lines.decode('utf-16').encode('utf-8'),
             timeout=15)
     except subprocess.TimeoutExpired:
@@ -75,80 +76,80 @@ def assignment():
     if request.method == 'GET':
         return send_file(segment_result, mimetype="text/plain", as_attachment=True, download_name=file_name)
     else:
-        return redirect(url_for('segment'))
+        return redirect(url_for('article_segment'))
 
 # ======================== update ======================== #
 
-#  SQL engine create
-engine = create_engine("sqlite:///Corpus.db", connect_args={"check_same_thread": False})
-session = Session(engine)
-Base = declarative_base()
-tablename = "Hakka"
-class Table(Base):
-    __tablename__ = tablename
-    Origin = Column(Text, primary_key=True)
-    Field = Column(Text)
-    Class = Column(Text)
-    Pronounce = Column(Text)
-    Chinese = Column(Text)
-    Source = Column(Text)
+# SQL engine create
+# engine = create_engine("sqlite:///Corpus.db", connect_args={"check_same_thread": False})
+# session = Session(engine)
+# Base = declarative_base()
+# tablename = "Hakka"
+# class Table(Base):
+#     __tablename__ = tablename
+#     Origin = Column(Text, primary_key=True)
+#     Field = Column(Text)
+#     Class = Column(Text)
+#     Pronounce = Column(Text)
+#     Chinese = Column(Text)
+#     Source = Column(Text)
 
-    def __init__(
-        self, Origin=None, Field=None, Class=None, 
-        Pronounce=None, Chinese=None, Source=None):
-            self.Origin = Origin
-            self.Field = Field
-            self.Class = Class
-            self.Pronounce = Pronounce
-            self.Chinese = Chinese
-            self.Source = Source
+#     def __init__(
+#         self, Origin=None, Field=None, Class=None, 
+#         Pronounce=None, Chinese=None, Source=None):
+#             self.Origin = Origin
+#             self.Field = Field
+#             self.Class = Class
+#             self.Pronounce = Pronounce
+#             self.Chinese = Chinese
+#             self.Source = Source
 
-columns = ['Origin', 'Field', 'Class', 'Pronounce', 'Chinese', 'Source']
+# columns = ['Origin', 'Field', 'Class', 'Pronounce', 'Chinese', 'Source']
 
-@app.route('/update_corpus', methods=['POST'])
-@jwt_required()
-def update_corpus():
-    #print(request.files)
-    file = request.files['file']
-    if file.filename.endswith('.csv'):
-        try:
-            df = pd.read_csv(file, dtype=str, keep_default_na=False)
-        except:
-            reply = {'msg': '檔案讀取時發生錯誤，可能為編碼或表格格式問題'}
-            return jsonify(reply), 510
+# @app.route('/update_corpus', methods=['POST'])
+# @jwt_required()
+# def update_corpus():
+#     #print(request.files)
+#     file = request.files['file']
+#     if file.filename.endswith('.csv'):
+#         try:
+#             df = pd.read_csv(file, dtype=str, keep_default_na=False)
+#         except:
+#             reply = {'msg': '檔案讀取時發生錯誤，可能為編碼或表格格式問題'}
+#             return jsonify(reply), 510
 
-        if list(df.columns) == columns:
-            for i, data in df.iterrows():
-                #print(data)
-                obj = session.get(Table, {'Origin':data['Origin']})
-                if not obj:
-                    session.add(Table(
-                        data['Origin'],
-                        data['Field'],
-                        data['Class'],
-                        data['Pronounce'],
-                        data['Chinese'],
-                        data['Source']))
-                else:
-                    obj = session.query(Table).filter_by(Origin=data['Origin'])
-                    obj.update({
-                        'Field': data['Field'],
-                        'Class': data['Class'],
-                        'Pronounce': data['Pronounce'],
-                        'Chinese': data['Chinese'],
-                        'Source': data['Source']
-                    })
+#         if list(df.columns) == columns:
+#             for i, data in df.iterrows():
+#                 #print(data)
+#                 obj = session.get(Table, {'Origin':data['Origin']})
+#                 if not obj:
+#                     session.add(Table(
+#                         data['Origin'],
+#                         data['Field'],
+#                         data['Class'],
+#                         data['Pronounce'],
+#                         data['Chinese'],
+#                         data['Source']))
+#                 else:
+#                     obj = session.query(Table).filter_by(Origin=data['Origin'])
+#                     obj.update({
+#                         'Field': data['Field'],
+#                         'Class': data['Class'],
+#                         'Pronounce': data['Pronounce'],
+#                         'Chinese': data['Chinese'],
+#                         'Source': data['Source']
+#                     })
 
-                session.commit()
+#                 session.commit()
 
-            reply = {'msg': '更新成功'}
-            return jsonify(reply)
-        else:
-            reply = {'msg': '表格列名錯誤'}
-            return jsonify(reply), 510
-    else:
-        reply = {'msg': '只接受CSV檔'}
-        return jsonify(reply), 415
+#             reply = {'msg': '更新成功'}
+#             return jsonify(reply)
+#         else:
+#             reply = {'msg': '表格列名錯誤'}
+#             return jsonify(reply), 510
+#     else:
+#         reply = {'msg': '只接受CSV檔'}
+#         return jsonify(reply), 415
 
 engine2 = create_engine(f"mysql+pymysql://{user}:{password}@{SQL_IP}:3306/Hakka_Corp")
 session2 = Session(engine2)
@@ -217,21 +218,22 @@ def update():
 
 # ======================== download ======================== #
 
-@app.route('/download', methods=['GET'])
-def download():
-    file_name = "output.csv"
-    format = 'utf-8'
-    csv_file = BytesIO()
+# @app.route('/download', methods=['GET'])
+# @jwt_required()
+# def download():
+#     file_name = "output.csv"
+#     format = 'utf-8'
+#     csv_file = BytesIO()
 
-    obj = session.query(Table).all()
-    csv_file.write('Origin,Field,Class,Pronounce,Chinese,Source\n'.encode(format))
-    for row in obj:
-        row = vars(row)
-        csv_file.write((
-            f"{row['Origin']},{row['Field']},{row['Class']},"
-            f"{row['Pronounce']},{row['Chinese']},{row['Source']}\n").encode(format))
-    csv_file.seek(0)
-    return send_file(csv_file, mimetype="text/csv", as_attachment=True, download_name=file_name)
+#     obj = session.query(Table).all()
+#     csv_file.write('Origin,Field,Class,Pronounce,Chinese,Source\n'.encode(format))
+#     for row in obj:
+#         row = vars(row)
+#         csv_file.write((
+#             f"{row['Origin']},{row['Field']},{row['Class']},"
+#             f"{row['Pronounce']},{row['Chinese']},{row['Source']}\n").encode(format))
+#     csv_file.seek(0)
+#     return send_file(csv_file, mimetype="text/csv", as_attachment=True, download_name=file_name)
 
 # ======================== login ======================== #
 

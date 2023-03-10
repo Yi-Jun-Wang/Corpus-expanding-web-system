@@ -206,7 +206,7 @@ class EditableTable extends React.Component {
       return;
     }
     const { dataSource } = this.state;
-    const priority = { '': 0, adj: 1, n: 2, pron: 3, adv: 4, v: 5 };
+    // const priority = { '': 0, adj: 1, n: 2, pron: 3, adv: 4, v: 5 };
     let words = [];
     let new_word = {};
     let found = false;
@@ -220,17 +220,18 @@ class EditableTable extends React.Component {
         found = false;
         new_word = { 
           key: `${i}`,
-          pk: '', 
+          pk: '',
           spell1: '',
           spell2: '',
           spell3: '',
           spell4: '',
           spell5: '',
           spell6: '',
-          freq: '0', 
-          class: '' 
+          freq: '0',
+          class: ''
         };
-        let temp = new_words[i]
+        let temp = new_words[i];
+        let total_freq = 0, count = 0;
         for (let j = 0; j < dataSource.length; j++) {
           if (temp.search(dataSource[j].pk) === 0) {
             temp = temp.substring(dataSource[j].pk.length);
@@ -248,11 +249,14 @@ class EditableTable extends React.Component {
             // if (priority[new_word.class] < priority[dataSource[j].class]) {
             //   new_word.class = dataSource[j].class;
             // }
-            new_word.class += `${dataSource[j].class},`
+            new_word.class += `${dataSource[j].class},`;
+            total_freq += parseInt(dataSource[j].freq);
+            count++;
           } else if (found) {
             break;
           }
         }
+        new_word.freq = Math.floor(total_freq/count);
         words.push(new_word);
       }
     }
@@ -289,13 +293,20 @@ class EditableTable extends React.Component {
         message.success(res.data['msg']);
       })
       .catch((e) => {
+        const { setAuth } = this.props;
         message.error(e.response.data['msg']);
+        if (e.response.data['msg'] === "Token has expired") {
+          message.warning("登入過期，請重新登入");
+          sessionStorage.removeItem("token");
+          setAuth(false);
+        }
       })
       .finally(() => {});
   }
 
   render() {
     const {words} = this.state;
+    const {auth} = this.props;
     const components = {
       body: {
         row: EditableRow,
@@ -318,6 +329,8 @@ class EditableTable extends React.Component {
         }),
       };
     });
+
+    if (auth) {
       return (
         <div style={{
           width: '80vw',
@@ -344,22 +357,12 @@ class EditableTable extends React.Component {
             }}
           />
         </div>
-      );
+      );        
+    } 
+    else {
+      return (<Navigate to="/login" />);      
+    }
   }
 }
 
-const combine_page = (props) => {
-  if (props.auth) {
-    return (
-      <EditableTable />
-    );
-  }
-  else {
-    useEffect( () => { 
-      message.warning("登入後才可進入該頁面！");
-    }, []);
-    return <Navigate to="/login" />;
-  }
-}
-
-export default combine_page;
+export default EditableTable;

@@ -25,7 +25,7 @@ class Login_interface extends React.Component {
         axios.post(`${api_url}/login`, data)
         .then((response) => {
             message.success("Login successfully.")
-            console.log(response);
+            // console.log(response);
             sessionStorage.setItem("token", response.data['access_token']);
             if (onChange != undefined){
                 onChange(true);

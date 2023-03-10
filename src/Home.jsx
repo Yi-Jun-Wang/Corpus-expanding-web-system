@@ -1,6 +1,7 @@
 import 'antd/dist/antd.css';
 import './App.css'
 import { Outlet, Link } from 'react-router-dom'
+import { message } from 'antd';
 const Home = (props) => {
     return (
         <div className="App">
@@ -13,7 +14,11 @@ const Home = (props) => {
                   </h1>
                   <nav>
                       <ul className="main-nav">
-                          <li><Link to={"/wdcomb"}>新增詞句</Link></li>
+                          <li>
+                            <Link to={"/wdcomb"}>
+                                {props.auth ? '新增詞句' : <span onClick={() => {message.warning("登入後才可訪問該頁面");}}>新增詞句</span>}
+                            </Link>
+                          </li>
                           <li><Link to={props.auth ? "/logout" : "/login"}>{props.auth ? 'Logout' : 'Login'}</Link></li>
                       </ul>
                   </nav>
