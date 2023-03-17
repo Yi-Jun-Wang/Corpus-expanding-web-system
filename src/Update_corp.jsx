@@ -4,6 +4,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import { Button, message, Upload, Progress } from 'antd';
 
 // const api_url = "https://10.10.8.42:5000";
+// const api_url = 'https://140.113.170.220:5000';
 const api_url = 'https://127.0.0.1:5000';
 class Update_area extends React.Component {
 

@@ -1,25 +1,45 @@
 from flask import Flask, jsonify, request, send_file, redirect, url_for
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
-from sqlalchemy import Column, Text, VARCHAR, DECIMAL, create_engine, func
+from sqlalchemy import Column, VARCHAR, DECIMAL, create_engine, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 from io import BytesIO
 from dotenv import load_dotenv
 from codecs import BOM_UTF16_LE
 from os import getenv
-from time import time
+from time import time, sleep
 from json import load
-import subprocess
 import socket
-import pandas as pd
 
 load_dotenv()
 with open("ACCOUNT.json") as f:
     Accounts = load(f)
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('127.0.0.1', 6000))
-client.settimeout(0.5)
+
+client_segment = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_split = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+while(1):
+    try:
+        # client_segment.connect(('127.0.0.1', 7000))    
+        client_segment.connect(('host.docker.internal', 7000))
+        print("connected successfully.")
+        break
+    except:
+        sleep(1)
+        print("segment connecting...")
+        pass
+while(1):
+    try:
+        # client_split.connect(('127.0.0.1', 6000))    
+        client_split.connect(('host.docker.internal', 6000))
+        print("connected successfully.")
+        break
+    except:
+        sleep(1)
+        print("split connecting...")
+        pass
+client_segment.settimeout(0.5)
+client_split.settimeout(0.5)
 user = getenv("user")
 password = getenv("pass")
 SQL_IP = getenv("IP")
@@ -28,7 +48,7 @@ CORS(app)
 jwt = JWTManager()
 jwt.init_app(app)
 app.config['JWT_SECRET_KEY'] = 'JimmyWang'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 1 # 2hrs
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 7200 # 2hrs
 
 # ======================== segment ======================== #
 
@@ -39,27 +59,19 @@ def article_segment(accent='1', spell='0', out_format='0'):
     split_name = file.filename.split('.')
     file_name = split_name[0] + "_segment." + split_name[-1]
 
-    # accent = request.args.get('accent')
-    # spell = request.args.get('spell')
-    # format = request.args.get('format')
     lines = file.read()
-    lines += "\nend_of_article".encode('utf-16')
-
-    process = subprocess.Popen(
-        ["C:/研究所/雲端詞庫系統/Hakka_NLP_command/x64/Debug/Hakka_NLP_command.exe", accent, spell, out_format],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
-
-    # process.stdin.write(lines.decode('utf-16').encode('utf-8'))
-    # process.stdin.close()
-    
-    try:
-        result, errs = process.communicate(
-            input=lines.decode('utf-16').encode('utf-8'),
-            timeout=15)
-    except subprocess.TimeoutExpired:
-        return jsonify({'msg': '斷詞錯誤'}), 415
+    client_segment.send(f"initial setting:{accent}{spell}{out_format}".encode("utf-8"))
+    sleep(1)
+    client_segment.send(lines.decode("utf-16le").replace('\r', '').encode("utf-8"))
+    sleep(1)
+    client_segment.send("end_of_article".encode("utf-8"))
+    result = b""
+    while(1):
+        try:
+            Rx = client_segment.recv(1024)
+        except socket.timeout:
+            break
+        result += Rx
  
     bom = BOM_UTF16_LE
     Buffer = BytesIO()
@@ -255,11 +267,11 @@ def login_jwt():
 def split():
     item = request.get_json()
     sent = item['sent']
-    client.send(sent.encode('utf-8'))
+    client_split.send(sent.encode('utf-8'))
     result = b""
     while(1):
         try:
-            Rx = client.recv(1024)
+            Rx = client_split.recv(1024)
         except socket.timeout:
             return jsonify({'msg':'Timeout'}), 500
         
@@ -291,3 +303,6 @@ def split():
         sentence += f"{temp[0]}_"
 
     return jsonify({'words':words_list, 'sentence':sentence}), 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, ssl_context=('127.0.0.1.pem', '127.0.0.1-key.pem'))

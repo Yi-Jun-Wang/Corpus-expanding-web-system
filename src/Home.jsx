@@ -1,5 +1,7 @@
 import 'antd/dist/antd.css';
 import './App.css'
+import NYCU from './images/NYCU.png'
+import Big_bg from './images/Big_bg.jpg'
 import { Outlet, Link } from 'react-router-dom'
 import { message } from 'antd';
 const Home = (props) => {
@@ -9,7 +11,7 @@ const Home = (props) => {
               <header className="page-header wrapper">
                   <h1>
                     <Link to="/">
-                    <img className="logo" src="src/images/NYCU.png" alt="陽明交通大學" />
+                    <img className="logo" src={NYCU} alt="陽明交通大學" />
                     </Link>
                   </h1>
                   <nav>

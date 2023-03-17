@@ -7,7 +7,7 @@
 #Top-area {
   background-color: rgba(255, 255, 255, .6);
   background-blend-mode: screen;
-  background-image: url(src/images/Big_bg.jpg);
+  background-image: url(./images/Big_bg.jpg);
   height: 30vh;
   min-height: 160px;
 }
